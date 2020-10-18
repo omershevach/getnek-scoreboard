@@ -22,7 +22,7 @@ CreateThread(function()
         Playtime = Playtime + 1
         SendNUIMessage({Action = "Playtime", Playtime = Playtime})
 
-        Wait(1000)
+        Wait(50)
     end
 end)
 
