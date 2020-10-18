@@ -1,7 +1,7 @@
 # getnek-scoreboard
 Variables To Change| 
 ------------ |
-Config.BotToken
-Config.GuildId
+<b>Config.BotToken</b>
+<b>Config.GuildId</b>
 
 ![GitHub Logo](https://i.imgur.com/lah56d6.png)
