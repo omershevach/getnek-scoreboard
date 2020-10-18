@@ -1,0 +1,2 @@
+# getnek-scoreboard
+FiveM Scoreboard
