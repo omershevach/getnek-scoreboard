@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="nui://game/ui/jquery.js" type="text/javascript"></script>
+    </head>
+
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap");
+
+        html {
+            user-select: none;
+            outline: none;
+            white-space: nowrap;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        #Main {
+            display: none;
+            font-family: "Montserrat", sans-serif;
+            color: white;
+            overflow: scroll;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 35%;
+            height: 60%;
+            border: 0.2vw solid rgba(255, 255, 255, 0.8);
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        #Header {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 0.5vw;
+
+            -webkit-box-shadow: 0px 0px 40px -10px rgba(0,0,0,0.75);
+            -moz-box-shadow: 0px 0px 40px -10px rgba(0,0,0,0.75);
+            box-shadow: 0px 0px 40px -10px rgba(0,0,0,0.75);
+
+            width: 95%;
+            height: auto;
+        }
+
+        #Data {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 10vw;
+            width: 100%;
+        }
+
+        #DataChildHeader {
+            font-size: 0.9vw;
+            color: #a7d0de;
+            
+        }
+
+        #DataChild {
+            font-size: 0.75vw;
+        }
+
+        #Title {
+            color: #a7d0de;
+            text-decoration: underline;
+        }
+
+        #Ping {
+            color: #00ca00;
+            white-space: nowrap;
+        }
+
+        #PlayersBar {
+            text-align: center;
+            font-size: 0.7vw;
+            position: absolute;
+            left: 50%;
+            top: 1px;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 20px;
+            border: 0.2vw solid rgba(255, 255, 255, 0.8);
+        }
+
+        #PlayerBarChild {
+            width: 100%;
+            height: 100%;
+            background-color: #00ca00;
+        }
+
+        #PlayerCount {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65vw;
+            z-index: 1000;
+        }
+
+        #PlayerEntry {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #PlaytimeData {
+            position: absolute;
+            font-size: 15px;
+            top: 29.5%;
+            left: 5%;
+            transform: translate(-3%, -100%);
+        }
+
+        table {
+            margin: 15px 0;
+            table-layout: fixed;
+            width: 100%;
+        }
+    </style>
+
+    <body>
+        <div id="Main">
+            <img id="Header" src="./header.png"></img>
+            <div id="Data">
+                <h id="PlayerCount">0 / 64</h>
+                <div id="PlayersBar"><div id="PlayerBarChild"></div></div><br><br>
+                <table id="PlayerEntry" align="center"></table>
+            </div>
+            <div id="PlaytimeData">Playtime: </div>
+        </div>
+    </body>
+
+    <script>
+        $(document).ready(function(){
+            let PlayerEntry = document.getElementById("PlayerEntry");
+            let PlayersBar = document.getElementById("PlayerBarChild");
+            let PlayersCount = document.getElementById("PlayerCount");
+            let PlaytimeData = document.getElementById("PlaytimeData");
+            
+            window.addEventListener("message", function(Event) {
+                let Data = Event.data;
+                
+                if (Data.Action == "Show") {
+                    if (Data.Toggle == true) {
+                        $("#Main").fadeIn(5)
+                    }
+                    else {
+                        $("#Main").fadeOut(5)
+                    }
+                }
+
+                else if (Data.Action == "Update") {
+                    let PlayerCount = 0
+                    PlayerEntry.innerHTML = `
+                    <tr>
+                        <th><span id="Title">ID</span></th>
+                        <th><span id="Title">STEAM</span></th>
+                        <th><span id="Title">DISCORD</span></th>
+                        <th><span id="Title">PING</span></th>
+                    </tr><br>`
+
+                    for (var Index = 0, Max = Data.Players.length; Index < Max; Index++) {
+                        PlayerCount += 1
+                    
+                        PlayerEntry.innerHTML += `
+                        <tr>
+                            <th>${Data.Players[Index].Id}</th>
+                            <th>${Data.Players[Index].Steam}</th>
+                            <th>${Data.Players[Index].Discord}</th>
+                            <th>(<span id="Ping">${Data.Players[Index].Ping} ms</span>)</th>
+                        </tr>`
+                    }
+
+                    PlayersCount.innerHTML = (`${PlayerCount} / 64`)
+                    let PlayersPrecentage = (PlayerCount / 64) * 100
+                    PlayersBar.setAttribute("style", `width: ${PlayersPrecentage}%`);
+                }
+
+                if (Data.Action == "Playtime") {
+                    PlaytimeData.innerHTML = (`<span id="Title">Playtime:</span> ${new Date(Data.Playtime * 1000).toISOString().substr(11, 8)}`)
+                }
+            })
+        });
+    </script>
+</html>
